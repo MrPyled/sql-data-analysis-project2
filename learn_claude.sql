@@ -1,13 +1,13 @@
 -- ================================================
--- إعداد قاعدة البيانات للمتجر الإلكتروني
+-- Preparing the database for the e-commerce store
 -- ================================================
 /*
--- إنشاء قاعدة البيانات
+-- Create database
 CREATE DATABASE ecommerce_store;
 USE ecommerce_store;
 
 -- ================================================
--- إنشاء جدول العملاء (Customers)
+-- Create Customers table
 -- ================================================
 CREATE TABLE customers (
     customer_id INT PRIMARY KEY,
@@ -19,7 +19,7 @@ CREATE TABLE customers (
 );
 
 -- ================================================
--- إنشاء جدول المنتجات (Products)
+-- Create Products table
 -- ================================================
 CREATE TABLE products (
     product_id INT PRIMARY KEY,
@@ -30,7 +30,7 @@ CREATE TABLE products (
 );
 
 -- ================================================
--- إنشاء جدول المبيعات (Sales)
+-- Create Sales table
 -- ================================================
 CREATE TABLE sales (
     sale_id INT,
@@ -43,22 +43,22 @@ CREATE TABLE sales (
 );
 
 -- ================================================
--- إضافة بيانات تجريبية للعملاء
+-- Insert sample data for customers
 -- ================================================
 INSERT INTO customers (customer_id, customer_name, age, gender, city, registration_date) VALUES
-(1, 'Ahmed Ali', 28, 'Male', 'الرياض', '2023-01-15'),
-(2, 'Fatima Hassan', 34, 'Female', 'جدة', '2023-02-20'),
-(3, 'Omar Mohammed', 25, 'Male', 'الدمام', '2023-01-30'),
-(4, 'Aisha Abdullah', 29, 'Female', 'الرياض', '2023-03-10'),
-(5, 'Khalid Ibrahim', 42, 'Male', 'مكة', '2023-02-05'),
-(6, 'Nour Salem', 31, 'Female', 'المدينة', '2023-01-25'),
-(7, 'Saeed Ahmad', 38, 'Male', 'جدة', '2023-04-12'),
-(8, 'Layla Youssef', 27, 'Female', 'الطائف', '2023-03-18'),
-(9, 'Hassan Ali', 33, 'Male', 'الأحساء', '2023-02-28'),
-(10, 'Maryam Faisal', 26, 'Female', 'الرياض', '2023-04-05');
+(1, 'Ahmed Ali', 28, 'Male', 'Riyadh', '2023-01-15'),
+(2, 'Fatima Hassan', 34, 'Female', 'Jeddah', '2023-02-20'),
+(3, 'Omar Mohammed', 25, 'Male', 'Dammam', '2023-01-30'),
+(4, 'Aisha Abdullah', 29, 'Female', 'Riyadh', '2023-03-10'),
+(5, 'Khalid Ibrahim', 42, 'Male', 'Mecca', '2023-02-05'),
+(6, 'Nour Salem', 31, 'Female', 'Medina', '2023-01-25'),
+(7, 'Saeed Ahmad', 38, 'Male', 'Jeddah', '2023-04-12'),
+(8, 'Layla Youssef', 27, 'Female', 'Taif', '2023-03-18'),
+(9, 'Hassan Ali', 33, 'Male', 'Al-Ahsa', '2023-02-28'),
+(10, 'Maryam Faisal', 26, 'Female', 'Riyadh', '2023-04-05');
 
 -- ================================================
--- إضافة بيانات تجريبية للمنتجات
+-- Insert sample data for products
 -- ================================================
 INSERT INTO products (product_id, product_name, category, unit_price, cost_price) VALUES
 (1, 'iPhone 15', 'Electronics', 4999.00, 3499.00),
@@ -73,7 +73,7 @@ INSERT INTO products (product_id, product_name, category, unit_price, cost_price
 (10, 'Perfume', 'Beauty', 299.00, 209.00);
 
 -- ================================================
--- إضافة بيانات تجريبية للمبيعات
+-- Insert sample data for sales
 -- ================================================
 INSERT INTO sales (sale_id, customer_id, product_id, sale_date, quantity) VALUES
 (1, 1, 1, '2024-01-15', 1),
@@ -94,47 +94,137 @@ INSERT INTO sales (sale_id, customer_id, product_id, sale_date, quantity) VALUES
 (14, 4, 8, '2024-03-18', 1),
 (15, 5, 9, '2024-03-20', 1);
 */
--- ================================================
--- التأكد من البيانات
--- ================================================
-select * from customers where city = "الرياض";
-select * from products where unit_price > 500;
-select * from customers;
-select gender,count(customer_name) as gender_cline from customers group by gender;
-select avg(age) from customers;
-select * from sales order by sale_date desc limit 5;
-USE ecommerce_store;
-select * from customers as cus join sales as sl on cus.customer_id = sl.customer_id join products as ps on ps.product_id = sl.product_id;
-select cus.customer_name,sum(unit_price) as total_amount from customers as cus join sales as sl on cus.customer_id = sl.customer_id join products as ps on ps.product_id = sl.product_id group by cus.customer_id order by total_amount DEsc;
-select ps.product_name,sl.quantity from customers as cus join sales as sl on cus.customer_id = sl.customer_id join products as ps on ps.product_id = sl.product_id order by quantity desc;
-select * from customers as cus join sales as sl on cus.customer_id = sl.customer_id join products as ps on ps.product_id = sl.product_id;
-select ps.category,sum(ps.unit_price - ps.cost_price) as Interest from customers as cus join sales as sl on cus.customer_id = sl.customer_id join products as ps on ps.product_id = sl.product_id group by ps.category;
-select * from customers as cus join sales as sl on cus.customer_id = sl.customer_id join products as ps on ps.product_id = sl.product_id where cus.customer_id not in (sl.customer_id);
-/*SELECT 
-    cus.customer_id,
-    ps.product_name,
-    sl.quantity,
-    ps.unit_price,
-    sl.sale_date,
-    DATE_FORMAT(sl.sale_date, '%Y-%m') AS "year_month",
-    SUM(sl.quantity * ps.unit_price) OVER (
-        PARTITION BY DATE_FORMAT(sl.sale_date, '%Y-%m')
-    ) AS total_sales_month
-FROM customers AS cus
-JOIN sales AS sl ON cus.customer_id = sl.customer_id
-JOIN products AS ps ON ps.product_id = sl.product_id
-ORDER BY "year_month", sl.sale_date;
-SELECT 
-    DATE_FORMAT(sl.sale_date, '%Y-%m') AS "year_month",
-    SUM(sl.quantity * ps.unit_price) AS total_sales
-FROM customers AS cus
-JOIN sales AS sl ON cus.customer_id = sl.customer_id
-JOIN products AS ps ON ps.product_id = sl.product_id
-GROUP BY "year_month"
-ORDER BY "year_month;*/
 
--- select cus.customer_name,sum(sl.quantity * ps.unit_price) as "total_amount" from customers as cus join sales as sl on cus.customer_id = sl.customer_id join products as ps on ps.product_id = sl.product_id group by cus.customer_name order by "total_amount" desc limit 1;
-select ps.category,sum(ps.unit_price - ps.cost_price) as Nes_pnfit from customers as cus join sales as sl on cus.customer_id = sl.customer_id join products as ps on ps.product_id = sl.product_id group by ps.category order by Nes_pnfit DESC;
-select cus.customer_name,count(sl.product_id) from customers as cus join sales as sl on cus.customer_id = sl.customer_id join products as ps on ps.product_id = sl.product_id group by cus.customer_name ;
-select sum(ps.unit_price * sl.quantity)/count(distinct sl.sale_id)  from customers as cus join sales as sl on cus.customer_id = sl.customer_id join products as ps on ps.product_id = sl.product_id;
+-- ================================================
+-- Verify inserted data
+-- ================================================
+
+-- ================================================
+-- Exercise 1: Basic Queries
+-- ================================================
+
+-- 1️⃣ Show all customers from Riyadh
+SELECT * 
+FROM customers 
+WHERE city = 'الرياض';
+
+-- 2️⃣ Show products with a price greater than 500 SAR
+SELECT * 
+FROM products 
+WHERE unit_price > 500;
+
+-- 3️⃣ Show the number of customers grouped by gender
+SELECT gender, COUNT(customer_id) AS customer_count
+FROM customers 
+GROUP BY gender;
+
+-- 4️⃣ Show the average age of customers
+SELECT AVG(age) AS avg_age
+FROM customers;
+
+-- 5️⃣ Show the latest 5 sales
+SELECT * 
+FROM sales 
+ORDER BY sale_date DESC 
+LIMIT 5;
+
+
+
+-- ================================================
+-- Exercise 2: Advanced Queries (JOIN)
+-- ================================================
+
+-- 1️⃣ Show sales details with customer and product names
+SELECT 
+    sl.sale_id,
+    cus.customer_name,
+    ps.product_name,
+    sl.sale_date,
+    sl.quantity
+FROM customers AS cus
+JOIN sales AS sl ON cus.customer_id = sl.customer_id
+JOIN products AS ps ON ps.product_id = sl.product_id;
+
+-- 2️⃣ Calculate the total sales amount for each customer
+SELECT 
+    cus.customer_name,
+    SUM(sl.quantity * ps.unit_price) AS total_amount
+FROM customers AS cus
+JOIN sales AS sl ON cus.customer_id = sl.customer_id
+JOIN products AS ps ON ps.product_id = sl.product_id
+GROUP BY cus.customer_name
+ORDER BY total_amount DESC;
+
+-- 3️⃣ Show the best-selling products (by quantity)
+SELECT 
+    ps.product_name,
+    SUM(sl.quantity) AS total_sold
+FROM sales AS sl
+JOIN products AS ps ON ps.product_id = sl.product_id
+GROUP BY ps.product_name
+ORDER BY total_sold DESC;
+
+-- 4️⃣ Show the total profit for each product category
+SELECT 
+    ps.category,
+    SUM((ps.unit_price - ps.cost_price) * sl.quantity) AS total_profit
+FROM sales AS sl
+JOIN products AS ps ON ps.product_id = sl.product_id
+GROUP BY ps.category
+ORDER BY total_profit DESC;
+
+-- 5️⃣ Show customers who did not purchase anything
+SELECT *
+FROM customers
+WHERE customer_id NOT IN (SELECT DISTINCT customer_id FROM sales);
+
+
+
+-- ================================================
+-- Advanced Analytical Questions
+-- ================================================
+
+-- 1️⃣ What is the total sales amount per month?
+SELECT 
+    DATE_FORMAT(sl.sale_date, '%Y-%m') AS year_month,
+    SUM(sl.quantity * ps.unit_price) AS total_sales
+FROM sales AS sl
+JOIN products AS ps ON ps.product_id = sl.product_id
+GROUP BY year_month
+ORDER BY year_month;
+
+-- 2️⃣ Which customer spent the highest amount?
+SELECT 
+    cus.customer_name,
+    SUM(sl.quantity * ps.unit_price) AS total_spent
+FROM customers AS cus
+JOIN sales AS sl ON cus.customer_id = sl.customer_id
+JOIN products AS ps ON ps.product_id = sl.product_id
+GROUP BY cus.customer_name
+ORDER BY total_spent DESC
+LIMIT 1;
+
+-- 3️⃣ Which product category is the most profitable?
+SELECT 
+    ps.category,
+    SUM((ps.unit_price - ps.cost_price) * sl.quantity) AS total_profit
+FROM sales AS sl
+JOIN products AS ps ON ps.product_id = sl.product_id
+GROUP BY ps.category
+ORDER BY total_profit DESC
+LIMIT 1;
+
+-- 4️⃣ How many different products has each customer purchased?
+SELECT 
+    cus.customer_name,
+    COUNT(DISTINCT sl.product_id) AS distinct_products
+FROM customers AS cus
+JOIN sales AS sl ON cus.customer_id = sl.customer_id
+GROUP BY cus.customer_name;
+
+-- 5️⃣ What is the average order value?
+SELECT 
+    SUM(sl.quantity * ps.unit_price) / COUNT(DISTINCT sl.sale_id) AS avg_order_value
+FROM sales AS sl
+JOIN products AS ps ON ps.product_id = sl.product_id;
 
